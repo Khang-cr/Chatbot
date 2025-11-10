@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Your Results</title>
+</head>
+<body>
+    <h2>Your DASS-21 Assessment Results</h2>
+    <p>Completed on {{ result.test_date|date:"F d, Y at H:i" }}</p>
+    
+    <hr>
+    
+    <h3>Scores</h3>
+    <p><strong>Depression:</strong> {{ result.depression_score }} - {{ result.depression_level }}</p>
+    <p><strong>Anxiety:</strong> {{ result.anxiety_score }} - {{ result.anxiety_level }}</p>
+    <p><strong>Stress:</strong> {{ result.stress_score }} - {{ result.stress_level }}</p>
+    
+    <hr>
+    
+    <h3>Recommendations</h3>
+    {% for rec in recommendations %}
+    <p><strong>{{ rec.message }}</strong></p>
+    <ul>
+        {% for action in rec.actions %}
+        <li>{{ action }}</li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+    
+    <hr>
+    
+    <h3>Important Information</h3>
+    <p>This assessment is a screening tool and not a diagnostic instrument. If you are experiencing severe symptoms or thoughts of self-harm, please seek immediate professional help.</p>
+    <ul>
+        <li><strong>Emergency:</strong> Call your local emergency services</li>
+        <li><strong>Crisis Hotline:</strong> Available 24/7 for support</li>
+        <li><strong>Campus Counseling:</strong> Free and confidential services available</li>
+    </ul>
+    
+    <br>
+    <a href="{% url 'profile_detail' %}">View Profile</a> | 
+    <a href="{% url 'homepage' %}">Homepage</a>
+</body>
+</html>

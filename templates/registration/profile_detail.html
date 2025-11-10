@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Your Profile</title>
+</head>
+<body>
+    <h2>Welcome back, {{ user.username }}!</h2>
+    <p>Member since {{ user.date_joined|date:"F Y" }}</p>
+    
+    <hr>
+    
+    <h3>Personal Information</h3>
+    <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Age:</strong> {{ profile.age }}</p>
+    <p><strong>Gender:</strong> {{ profile.get_gender_display }}</p>
+    <p><strong>Major/Occupation:</strong> {{ profile.occupation }}</p>
+    <p><strong>University:</strong> {{ profile.university }}</p>
+    
+    <hr>
+    
+    <h3>Assessment History</h3>
+    {% if test_history %}
+        {% for test in test_history %}
+        <p>
+            <strong>{{ test.test_date|date:"M d, Y" }}</strong><br>
+            Depression: {{ test.depression_score }} ({{ test.depression_level }})<br>
+            Anxiety: {{ test.anxiety_score }} ({{ test.anxiety_level }})<br>
+            Stress: {{ test.stress_score }} ({{ test.stress_level }})
+        </p>
+        <hr>
+        {% endfor %}
+    {% else %}
+        <p>No assessments completed yet.</p>
+    {% endif %}
+    
+    <br>
+    <a href="{% url 'dass21_test' %}">Take New Assessment</a> | 
+    <a href="{% url 'homepage' %}">Homepage</a> |
+    <a href="{% url 'logout' %}">Log Out</a>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DASS-21 Assessment</title>
+</head>
+<body>
+    <h2>DASS-21 Mental Health Assessment</h2>
+    <p>Please read each statement and select how much it applied to you <strong>over the past week</strong>.</p>
+    
+    <p>
+        <strong>0</strong> - Did not apply to me at all<br>
+        <strong>1</strong> - Applied to me to some degree<br>
+        <strong>2</strong> - Applied to me considerably<br>
+        <strong>3</strong> - Applied to me very much
+    </p>
+    
+    <hr>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for question in questions %}
+        <p>
+            <strong>{{ question.id }}.</strong> {{ question.text }}<br>
+            <input type="radio" name="q{{ question.id }}" value="0" required> 0
+            <input type="radio" name="q{{ question.id }}" value="1"> 1
+            <input type="radio" name="q{{ question.id }}" value="2"> 2
+            <input type="radio" name="q{{ question.id }}" value="3"> 3
+        </p>
+        {% endfor %}
+        
+        <hr>
+        <button type="submit">Submit Assessment</button>
+    </form>
+</body>
+</html>
