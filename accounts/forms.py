@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-
+from .models import UserProfile
 # Do Django không hỗ trợ sẵn form đăng ký nên phải tự cook
 
 class SignUpForm(UserCreationForm):
@@ -38,3 +38,11 @@ class SignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+    
+class TherapistVerificationForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['verification_document']
+        widgets = {
+            'verification_document': forms.FileInput(attrs={'accept':'image/*'})
+        }

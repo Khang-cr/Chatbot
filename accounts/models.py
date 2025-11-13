@@ -4,7 +4,18 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class UserProfile(models.Model):
+    USER_TYPE_CHOICES = [ ('student', 'Student'), ('therapist', 'Therapist')]
+
+    VERIFICATION_STATUS = [('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected')]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='student')
+
+    # verification for therapist
+    verification_status = models.CharField(max_length=10, choices=VERIFICATION_STATUS, default='pending')
+    verification_document = models.ImageField(upload_to='verification_docs', null=True, blank=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
+
     age = models.IntegerField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=[
         ('male', 'Male'),

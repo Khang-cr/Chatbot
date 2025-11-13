@@ -5,9 +5,28 @@ from .models import UserProfile, DASS21Result, CounselingSession, MentalHealthRe
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'age', 'gender', 'university', 'created_at')
-    list_filter = ('gender', 'year_of_study', 'has_previous_counseling')
+    list_display = ('user', 'user_type', 'verification_status', 'age', 'university', 'created_at')
+    list_filter = ('user_type', 'verification_status', 'gender')
     search_fields = ('user__username', 'user__email', 'university')
+    
+    # admin approve/reject therapist
+    actions = ['approve_therapist', 'reject_therapist']
+    
+    def approve_therapist(self, request, queryset):
+        from django.utils import timezone
+        updated = queryset.filter(user_type='therapist').update(
+            verification_status='approved',
+            verified_at=timezone.now()
+        )
+        self.message_user(request, f'{updated} therapist(s) approved.')
+    approve_therapist.short_description = 'Approve selected therapists'
+    
+    def reject_therapist(self, request, queryset):
+        updated = queryset.filter(user_type='therapist').update(
+            verification_status='rejected'
+        )
+        self.message_user(request, f'{updated} therapist(s) rejected.')
+    reject_therapist.short_description = 'Reject selected therapists'
 
 @admin.register(DASS21Result)
 class DASS21ResultAdmin(admin.ModelAdmin):

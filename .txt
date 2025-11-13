@@ -1,0 +1,168 @@
+[1mdiff --git a/accounts/admin.py b/accounts/admin.py[m
+[1mindex a306b1d..a8b8e7e 100644[m
+[1m--- a/accounts/admin.py[m
+[1m+++ b/accounts/admin.py[m
+[36m@@ -5,9 +5,28 @@[m [mfrom .models import UserProfile, DASS21Result, CounselingSession, MentalHealthRe[m
+ [m
+ @admin.register(UserProfile)[m
+ class UserProfileAdmin(admin.ModelAdmin):[m
+[31m-    list_display = ('user', 'age', 'gender', 'university', 'created_at')[m
+[31m-    list_filter = ('gender', 'year_of_study', 'has_previous_counseling')[m
+[32m+[m[32m    list_display = ('user', 'user_type', 'verification_status', 'age', 'university', 'created_at')[m
+[32m+[m[32m    list_filter = ('user_type', 'verification_status', 'gender')[m
+     search_fields = ('user__username', 'user__email', 'university')[m
+[32m+[m[41m    [m
+[32m+[m[32m    # admin approve/reject therapist[m
+[32m+[m[32m    actions = ['approve_therapist', 'reject_therapist'][m
+[32m+[m[41m    [m
+[32m+[m[32m    def approve_therapist(self, request, queryset):[m
+[32m+[m[32m        from django.utils import timezone[m
+[32m+[m[32m        updated = queryset.filter(user_type='therapist').update([m
+[32m+[m[32m            verification_status='approved',[m
+[32m+[m[32m            verified_at=timezone.now()[m
+[32m+[m[32m        )[m
+[32m+[m[32m        self.message_user(request, f'{updated} therapist(s) approved.')[m
+[32m+[m[32m    approve_therapist.short_description = 'Approve selected therapists'[m
+[32m+[m[41m    [m
+[32m+[m[32m    def reject_therapist(self, request, queryset):[m
+[32m+[m[32m        updated = queryset.filter(user_type='therapist').update([m
+[32m+[m[32m            verification_status='rejected'[m
+[32m+[m[32m        )[m
+[32m+[m[32m        self.message_user(request, f'{updated} therapist(s) rejected.')[m
+[32m+[m[32m    reject_therapist.short_description = 'Reject selected therapists'[m
+ [m
+ @admin.register(DASS21Result)[m
+ class DASS21ResultAdmin(admin.ModelAdmin):[m
+[1mdiff --git a/accounts/forms.py b/accounts/forms.py[m
+[1mindex 9c415a3..0a65c19 100644[m
+[1m--- a/accounts/forms.py[m
+[1m+++ b/accounts/forms.py[m
+[36m@@ -1,7 +1,7 @@[m
+ from django.contrib.auth.forms import UserCreationForm[m
+ from django.contrib.auth.models import User[m
+ from django import forms[m
+[31m-[m
+[32m+[m[32mfrom .models import UserProfile[m
+ # Do Django không hỗ trợ sẵn form đăng ký nên phải tự cook[m
+ [m
+ class SignUpForm(UserCreationForm):[m
+[36m@@ -37,4 +37,12 @@[m [mclass SignUpForm(UserCreationForm):[m
+         user.email = self.cleaned_data['email'][m
+         if commit:[m
+             user.save()[m
+[31m-        return user[m
+\ No newline at end of file[m
+[32m+[m[32m        return user[m
+[32m+[m[41m    [m
+[32m+[m[32mclass TherapistVerificationForm(forms.ModelForm):[m
+[32m+[m[32m    class Meta:[m
+[32m+[m[32m        model = UserProfile[m
+[32m+[m[32m        fields = ['verification_document'][m
+[32m+[m[32m        widgets = {[m
+[32m+[m[32m            'verification_document': forms.FileInput(attrs={'accept':'image/*'})[m
+[32m+[m[32m        }[m
+\ No newline at end of file[m
+[1mdiff --git a/accounts/models.py b/accounts/models.py[m
+[1mindex 655fbf2..d8f953c 100644[m
+[1m--- a/accounts/models.py[m
+[1m+++ b/accounts/models.py[m
+[36m@@ -4,7 +4,18 @@[m [mfrom django.contrib.auth.models import User[m
+ [m
+ # Create your models here.[m
+ class UserProfile(models.Model):[m
+[32m+[m[32m    USER_TYPE_CHOICES = [ ('student', 'Student'), ('therapist', 'Therapist')][m
+[32m+[m
+[32m+[m[32m    VERIFICATION_STATUS = [('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected')][m
+[32m+[m
+     user = models.OneToOneField(User, on_delete=models.CASCADE)[m
+[32m+[m[32m    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='student')[m
+[32m+[m
+[32m+[m[32m    # verification for therapist[m
+[32m+[m[32m    verification_status = models.CharField(max_length=10, choices=VERIFICATION_STATUS, default='pending')[m
+[32m+[m[32m    verification_document = models.ImageField(upload_to='verification_docs', null=True, blank=True)[m
+[32m+[m[32m    verified_at = models.DateTimeField(null=True, blank=True)[m
+[32m+[m
+     age = models.IntegerField(null=True, blank=True)[m
+     gender = models.CharField(max_length=10, choices=[[m
+         ('male', 'Male'),[m
+[1mdiff --git a/accounts/urls.py b/accounts/urls.py[m
+[1mindex 88e20c5..e29a195 100644[m
+[1m--- a/accounts/urls.py[m
+[1m+++ b/accounts/urls.py[m
+[36m@@ -4,13 +4,24 @@[m [mfrom .views import ([m
+     collect_basic_info_view, [m
+     dass21_test_view,[m
+     dass21_result_view,[m
+[31m-    profile_detail_view[m
+[32m+[m[32m    profile_detail_view,[m
+[32m+[m[32m    therapist_verification_view,[m
+[32m+[m[32m    verification_pending_view,[m
+[32m+[m[32m    therapist_basic_info_view,[m
+ )[m
+ [m
+ urlpatterns = [[m
+     path('signup/', SignUpView.as_view(), name='signup'),[m
+[32m+[m
+[32m+[m[32m    # student flow[m
+     path('basic-info/', collect_basic_info_view, name='collect_basic_info'),[m
+     path('dass21-test/', dass21_test_view, name='dass21_test'),[m
+     path('dass21-result/', dass21_result_view, name='dass21_result'),[m
+[32m+[m
+[32m+[m[32m    # therapist flow[m
+[32m+[m[32m    path('therapist-verification/', therapist_verification_view, name='therapist_verification'),[m
+[32m+[m[32m    path('verification-pending', verification_pending_view, name='verification_pending'),[m
+[32m+[m[32m    path('therapist-basic-info/', therapist_basic_info_view, name='therapist_basic_info'),[m
+[32m+[m
+     path('profile/', profile_detail_view, name='profile_detail'),[m
+ ][m
+\ No newline at end of file[m
+[1mdiff --git a/accounts/views.py b/accounts/views.py[m
+[1mindex f47ef60..1a306a6 100644[m
+[1m--- a/accounts/views.py[m
+[1m+++ b/accounts/views.py[m
+[36m@@ -1,11 +1,11 @@[m
+ from django.urls import reverse_lazy[m
+ from django.views.generic import CreateView[m
+[31m-from .forms import SignUpForm[m
+[32m+[m[32mfrom .forms import SignUpForm, TherapistVerificationForm[m
+ from .models import UserProfile, DASS21Result[m
+ from django.shortcuts import render, redirect[m
+ from django.contrib.auth.decorators import login_required[m
+ from django.contrib.auth import login[m
+[31m-import json[m
+[32m+[m[32mfrom django.contrib import messages[m
+ [m
+ class SignUpView(CreateView):[m
+     form_class = SignUpForm[m
+[36m@@ -13,15 +13,88 @@[m [mclass SignUpView(CreateView):[m
+     template_name = 'registration/signup.html'[m
+ [m
+     def form_valid(self, form):[m
+[31m-        response = super().form_valid(form)[m
+         user = form.save()[m
+[32m+[m[32m        user_type = self.request.POST.get('user_type', 'student')[m
+[32m+[m[32m        UserProfile.objects.create(user=user, user_type=user_type)[m
+         login(self.request, user)[m
+[31m-        # create new UserProfile for a new one[m
+[31m-        UserProfile.objects.create(user=user)[m
+[31m-        return response[m
+[32m+[m[32m        if user_type == 'therapist':[m
+[32m+[m[32m            return redirect('therapist_basic_info')[m
+[32m+[m[32m        else:[m
+[32m+[m[32m            return redirect('collect_basic_info')[m
+[32m+[m
+[32m+[m[32m@login_required[m
+[32m+[m[32mdef therapist_verification_view(request):[m
+[32m+[m[32m    profile = request.user.userprofile[m
+[32m+[m
+[32m+[m[32m    if profile.user_type != 'therapist':[m
+[32m+[m[32m        messages.error(request, 'This page is only for therapists!')[m
+[32m+[m[32m        return redirect('homepage')[m
+[32m+[m[41m    [m
+[32m+[m[32m    if request.method == 'POST':[m
+[32m+[m[32m        form = TherapistVerificationForm(request.POST, request.FILES, instance=profile)[m
+[32m+[m[32m        if form.is_valid():[m
+[32m+[m[32m            profile = form.save(commit=False)[m
+[32m+[m[32m            profile.verification_status = 'pending'[m
+[32m+[m[32m            profile.save()[m
+[32m+[m[32m            messages.success(request, 'Veri

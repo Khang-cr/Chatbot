@@ -1,11 +1,11 @@
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from .forms import SignUpForm
+from .forms import SignUpForm, TherapistVerificationForm
 from .models import UserProfile, DASS21Result
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-import json
+from django.contrib import messages
 
 class SignUpView(CreateView):
     form_class = SignUpForm
@@ -13,15 +13,88 @@ class SignUpView(CreateView):
     template_name = 'registration/signup.html'
 
     def form_valid(self, form):
-        response = super().form_valid(form)
         user = form.save()
+        user_type = self.request.POST.get('user_type', 'student')
+        UserProfile.objects.create(user=user, user_type=user_type)
         login(self.request, user)
-        # create new UserProfile for a new one
-        UserProfile.objects.create(user=user)
-        return response
+        if user_type == 'therapist':
+            return redirect('therapist_basic_info')
+        else:
+            return redirect('collect_basic_info')
+
+@login_required
+def therapist_verification_view(request):
+    profile = request.user.userprofile
+
+    if profile.user_type != 'therapist':
+        messages.error(request, 'This page is only for therapists!')
+        return redirect('homepage')
+    
+    if request.method == 'POST':
+        form = TherapistVerificationForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.verification_status = 'pending'
+            profile.save()
+            messages.success(request, 'Verification document submitted successfully! Please wait for approval.')
+            return redirect('verification_pending')
+        else:
+            messages.error(request, 'Please upload a valid image file.')
+    else:
+        form = TherapistVerificationForm(instance=profile)
+    return render(request, 'registration/therapist_verification.html', {'form': form})
+
+@login_required
+def verification_pending_view(request):
+    profile = request.user.userprofile
+
+    if profile.user_type != 'therapist':
+        return redirect('homepage')
+    return render(request, 'registration/verification_pending.html', {'status': profile.verification_status})
+
+@login_required
+def therapist_basic_info_view(request):
+    profile = request.user.userprofile
+    if profile.user_type != 'therapist':
+        messages.error(request, 'This page is only for therapist!')
+        return redirect('homepage')
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name', '')
+        last_name = request.POST.get('last_name', '')
+        age = request.POST.get('age', '')
+        gender = request.POST.get('gender', '')
+        occupation = request.POST.get('occupation', '')
+        university = request.POST.get('university', '')
+        phone = request.POST.get('phone', '')
+        
+        # Luu vao User
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        
+        # Luu vao UserProfile
+        profile.age = age
+        profile.gender = gender
+        profile.occupation = occupation
+        profile.university = university
+        profile.phone = phone
+        profile.save()
+        
+        # Chuyen sang trang upload verification
+        return redirect('therapist_verification')
+    
+    return render(request, 'registration/therapist_basic_info.html')
 
 @login_required
 def collect_basic_info_view(request):
+    profile = request.user.userprofile
+    if profile.user_type != 'student':
+        messages.error(request, 'This page is only for students!')
+        return redirect('homepage')
+
+
     if request.method == 'POST':
         first_name = request.POST.get('first_name', '')
         last_name = request.POST.get('last_name', '')
@@ -98,13 +171,20 @@ def profile_detail_view(request):
 
     user = request.user
     profile = user.userprofile
-    test_history = DASS21Result.objects.filter(user=user).order_by('-test_date')
-    
-    context = {
-        'user': user,
-        'profile': profile,
-        'test_history': test_history, # history
-    }
+
+    if profile.user_type == 'therapist':
+        context = {
+            'user': user,
+            'profile': profile
+        }
+        return render(request, 'registration/therapist_profile.html', context)
+    else:
+        test_history = DASS21Result.objects.filter(user=user).order_by('-test_date')
+        context = {
+            'user': user,
+            'profile': profile,
+            'test_history': test_history, # history
+        }
     
     return render(request, 'registration/profile_detail.html', context)
 

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Therapist Verification</title>
+</head>
+<body>
+    <h2>Therapist Verification</h2>
+    <p>Please upload your professional credentials (license, certificate, or ID).</p>
+    
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'error' %}
+        <p style="color: red;">
+            {{ message }}
+        </p>
+    {% else %}
+        <p style="color: green;">
+            {{ message }}
+        </p>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <p>
+            <label>Upload Verification Document (Image):</label><br>
+            {{ form.verification_document }}
+        </p>
+        
+        {% if form.errors %}
+        <p style="color: red;">{{ form.errors }}</p>
+        {% endif %}
+        
+        <button type="submit">Submit for Verification</button>
+    </form>
+</body>
+</html>

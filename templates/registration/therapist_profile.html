@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Therapist Profile</title>
+</head>
+<body>
+    <h2>Welcome back, Dr. {{ user.last_name }}!</h2>
+    <p>Member since {{ user.date_joined|date:"F Y" }}</p>
+    
+    <hr>
+    
+    <h3>Professional Information</h3>
+    <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Age:</strong> {{ profile.age }}</p>
+    <p><strong>Gender:</strong> {{ profile.get_gender_display }}</p>
+    <p><strong>Specialization:</strong> {{ profile.occupation }}</p>
+    <p><strong>Organization:</strong> {{ profile.university }}</p>
+    <p><strong>Phone:</strong> {{ profile.phone }}</p>
+    
+    <hr>
+    
+    <h3>Verification Status</h3>
+    {% if profile.verification_status == 'pending' %}
+        <p style="color: orange;"><strong>Status:</strong> Pending Review</p>
+        <p>Your verification document has been submitted. Please wait for admin approval.</p>
+    
+    {% elif profile.verification_status == 'rejected' %}
+        <p style="color: red;"><strong>Status:</strong> Rejected</p>
+        <p>Your verification was rejected. Please resubmit your credentials.</p>
+        <a href="{% url 'therapist_verification' %}">Resubmit Verification Document</a>
+    
+    {% elif profile.verification_status == 'approved' %}
+        <p style="color: green;"><strong>Status:</strong> Verified ✓</p>
+        <p>Verified on {{ profile.verified_at|date:"F d, Y" }}</p>
+        
+        <hr>
+        
+        <h3>Dashboard</h3>
+        <p>Welcome to your therapist dashboard.</p>
+        <p><em>Therapist features coming soon:</em></p>
+        <ul>
+            <li>View student assessments (with permission)</li>
+            <li>Messaging system</li>
+            <li>Appointment scheduling</li>
+            <li>Case management</li>
+        </ul>
+    {% endif %}
+    
+    <br>
+    <a href="{% url 'homepage' %}">Homepage</a> | 
+    <a href="{% url 'logout' %}">Log Out</a>
+</body>
+</html>

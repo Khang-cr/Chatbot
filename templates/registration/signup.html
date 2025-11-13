@@ -1,6 +1,50 @@
-<h2>Sign Up</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Sign Up</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+</head>
+<body>
+    <h2>Sign Up</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <p>
+            <label>Username:</label><br>
+            {{ form.username }}
+        </p>
+        
+        <p>
+            <label>Email:</label><br>
+            {{ form.email }}
+        </p>
+        
+        <p>
+            <label>Password:</label><br>
+            {{ form.password1 }}
+        </p>
+        
+        <p>
+            <label>Confirm Password:</label><br>
+            {{ form.password2 }}
+        </p>
+        
+        <p>
+            <label>I am a:</label><br>
+            <input type="radio" name="user_type" value="student" id="student" checked required>
+            <label for="student">Student</label><br>
+            
+            <input type="radio" name="user_type" value="therapist" id="therapist" required>
+            <label for="therapist">Therapist</label>
+        </p>
+        
+        {% if form.errors %}
+        <p style="color: red;">{{ form.errors }}</p>
+        {% endif %}
+        
+        <button type="submit">Sign Up</button>
+    </form>
+    
+    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+</body>
+</html>
