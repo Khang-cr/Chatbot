@@ -4,7 +4,28 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class UserProfile(models.Model):
+    USER_TYPE_CHOICES = [
+        ('student', 'Student'),
+        ('therapist', 'Therapist'),
+    ]
+    
+    VERIFICATION_STATUS = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    
+    # User type
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='student')
+    
+    # Verification for therapist
+    verification_status = models.CharField(max_length=10, choices=VERIFICATION_STATUS, default='pending', null=True, blank=True)
+    verification_document = models.ImageField(upload_to='verification_docs/', null=True, blank=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    
+    # Student info
     age = models.IntegerField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=[
         ('male', 'Male'),
@@ -13,6 +34,7 @@ class UserProfile(models.Model):
     occupation = models.CharField(max_length=100, null=True, blank=True)
     university = models.CharField(max_length=200, null=True, blank=True)
     
+    # Additional fields
     phone = models.CharField(max_length=15, null=True, blank=True)
     emergency_contact = models.CharField(max_length=15, null=True, blank=True)
     emergency_contact_name = models.CharField(max_length=100, null=True, blank=True)
@@ -26,19 +48,15 @@ class UserProfile(models.Model):
     ])
 
     student_id = models.CharField(max_length=50, null=True, blank=True)
-
-    # counseling history
     has_previous_counseling = models.BooleanField(default=False)
     is_currently_in_theraphy = models.BooleanField(default=False)
-
     notes = models.TextField(null=True, blank=True)
-
-    # Metadata
-    created_at = models.DateTimeField(auto_now_add=True, null= True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return f"Profile of {self.user.username}"
+        return f"Profile of {self.user.username} ({self.user_type})"
 
 class CounselingSession(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

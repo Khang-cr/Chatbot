@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Verification Pending</title>
+</head>
+<body>
+    <h2>Verification Status</h2>
+    
+    {% if status == 'pending' %}
+    <p>Your verification document has been submitted successfully.</p>
+    <p>Please wait for admin approval. This may take 1-2 business days.</p>
+    <p><strong>Status:</strong> Pending Review</p>
+    
+    {% elif status == 'approved' %}
+    <p style="color: green;"><strong>Congratulations!</strong> Your account has been verified.</p>
+    <p><a href="{% url 'profile_detail' %}">Go to Dashboard</a></p>
+    
+    {% elif status == 'rejected' %}
+    <p style="color: red;"><strong>Verification Rejected</strong></p>
+    <p>Please contact support or <a href="{% url 'therapist_verification' %}">resubmit your document</a>.</p>
+    {% endif %}
+    
+    <br>
+    <a href="{% url 'homepage' %}">Homepage</a> | 
+    <a href="{% url 'login' %}">Logout</a>
+</body>
+</html>

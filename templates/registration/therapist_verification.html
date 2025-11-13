@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Therapist Verification</title>
+    <style>
+        .error-message { color: red; }
+        .success-message { color: green; }
+    </style>
+</head>
+    {% if messages %}
+    {% for message in messages %}
+    <p class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+        {{ message }}
+    </p>
+    {% endfor %}
+    {% endif %}
+        {{ message }}
+
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <p>
+            <label>Upload Verification Document (Image):</label><br>
+            {{ form.verification_document }}
+        </p>
+        
+        {% if form.errors %}
+        <p style="color: red;">{{ form.errors }}</p>
+        {% endif %}
+        
+        <button type="submit">Submit for Verification</button>
+    </form>
+</body>
+</html>

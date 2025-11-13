@@ -122,6 +122,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'profile_detail' # Sau nay doi thanh trang chinh
+LOGIN_REDIRECT_URL = 'homepage'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

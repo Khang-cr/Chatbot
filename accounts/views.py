@@ -13,18 +13,59 @@ class SignUpView(CreateView):
     template_name = 'registration/signup.html'
 
     def form_valid(self, form):
+        # FIX: Chỉ save 1 lần
         user = form.save()
+        
+        # Lấy user_type từ POST data (vì không có trong form)
         user_type = self.request.POST.get('user_type', 'student')
+        
+        # Tạo UserProfile
         UserProfile.objects.create(user=user, user_type=user_type)
+        
+        # Login
         login(self.request, user)
         
+        # Redirect dựa vào user_type
         if user_type == 'therapist':
-            return redirect('therapist_basic_info')
+            return redirect('therapist_basic_info')  # FIX: Sửa typo
         else:
             return redirect('collect_basic_info')
 
 @login_required
+def therapist_verification_view(request):
+    profile = request.user.userprofile  # FIX: Sửa typo
+
+    if profile.user_type != 'therapist':
+        messages.error(request, 'This page is only for therapists!')
+        return redirect('homepage')
+    
+    if request.method == 'POST':
+        form = TherapistVerificationForm(request.POST, request.FILES, instance=profile)  # FIX
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.verification_status = 'pending'
+            profile.save()
+            messages.success(request, 'Verification document submitted successfully! Please wait for approval.')
+            return redirect('verification_pending')
+        else:
+            messages.error(request, 'Please upload a valid image file.')
+    else:
+        form = TherapistVerificationForm(instance=profile)  # FIX: Sửa typo
+    
+    return render(request, 'registration/therapist_verification.html', {'form': form})  # FIX: Thêm return
+
+@login_required
+def verification_pending_view(request):
+    profile = request.user.userprofile
+
+    if profile.user_type != 'therapist':
+        return redirect('homepage')
+    return render(request, 'registration/verification_pending.html', {'status': profile.verification_status})
+
+
+@login_required
 def therapist_basic_info_view(request):
+    """Collect basic information for therapist"""
     profile = request.user.userprofile
     
     if profile.user_type != 'therapist':
@@ -40,11 +81,13 @@ def therapist_basic_info_view(request):
         university = request.POST.get('university', '')
         phone = request.POST.get('phone', '')
         
+        # Save to User model
         user = request.user
         user.first_name = first_name
         user.last_name = last_name
         user.save()
         
+        # Save to UserProfile
         profile.age = age
         profile.gender = gender
         profile.occupation = occupation
@@ -52,46 +95,15 @@ def therapist_basic_info_view(request):
         profile.phone = phone
         profile.save()
         
+        # Redirect to verification page
         return redirect('therapist_verification')
     
     return render(request, 'registration/therapist_basic_info.html')
 
-@login_required
-def therapist_verification_view(request):
-    profile = request.user.userprofile
-
-    if profile.user_type != 'therapist':
-        messages.error(request, 'This page is only for therapists!')
-        return redirect('homepage')
-    
-    if request.method == 'POST':
-        form = TherapistVerificationForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            profile = form.save(commit=False)
-            profile.verification_status = 'pending'
-            profile.save()
-            messages.success(request, 'Verification document submitted successfully! Please wait for approval.')
-            return redirect('verification_pending')
-        else:
-            messages.error(request, 'Please upload a valid image file.')
-    else:
-        form = TherapistVerificationForm(instance=profile)
-    
-    return render(request, 'registration/therapist_verification.html', {'form': form})
-
-@login_required
-def verification_pending_view(request):
-    profile = request.user.userprofile
-    
-    if profile.user_type != 'therapist':
-        return redirect('homepage')
-    
-    return render(request, 'registration/verification_pending.html', {'status': profile.verification_status})
 
 @login_required
 def collect_basic_info_view(request):
     profile = request.user.userprofile
-    
     if profile.user_type != 'student':
         messages.error(request, 'This page is only for students!')
         return redirect('homepage')
@@ -109,12 +121,15 @@ def collect_basic_info_view(request):
         user.last_name = last_name
         user.save()
 
+        # UserProfile updating
+        profile = request.user.userprofile
         profile.age = age
         profile.gender = gender
         profile.occupation = occupation
         profile.university = university
         profile.save()
         
+        # register then do test
         return redirect('dass21_test')
     
     return render(request, 'registration/collect_basic_info.html')
@@ -122,12 +137,15 @@ def collect_basic_info_view(request):
 @login_required
 def dass21_test_view(request):
     if request.method == 'POST':
+        # get answer
         answers = {}
         for i in range(1, 22):
             answers[f'q{i}'] = int(request.POST.get(f'q{i}', 0))
         
+        # cal score
         scores = calculate_dass21_scores(answers)
         
+        # store result
         DASS21Result.objects.create(
             user=request.user,
             answers=answers,
@@ -139,9 +157,12 @@ def dass21_test_view(request):
             stress_level=scores['stress_level']
         )
         
+        # redirect to the result page
         return redirect('dass21_result')
     
+    # DASS-21 questions
     questions = get_dass21_questions()
+    
     return render(request, 'registration/DASS-21_TEST.html', {'questions': questions})
 
 @login_required
@@ -164,12 +185,14 @@ def profile_detail_view(request):
     profile = user.userprofile
     
     if profile.user_type == 'therapist':
+        # Therapist profile
         context = {
             'user': user,
             'profile': profile,
         }
         return render(request, 'registration/therapist_profile.html', context)
     else:
+        # Student profile
         test_history = DASS21Result.objects.filter(user=user).order_by('-test_date')
         context = {
             'user': user,
@@ -177,11 +200,12 @@ def profile_detail_view(request):
             'test_history': test_history,
         }
         return render(request, 'registration/student_profile.html', context)
-
+    
 # Helper functions
 
 def get_dass21_questions():
     return [
+        # Depression (questions: 3, 5, 10, 13, 16, 17, 21)
         {'id': 1, 'text': 'I found it hard to wind down', 'category': 'stress'},
         {'id': 2, 'text': 'I was aware of dryness of my mouth', 'category': 'anxiety'},
         {'id': 3, 'text': "I couldn't seem to experience any positive feeling at all", 'category': 'depression'},
@@ -206,14 +230,17 @@ def get_dass21_questions():
     ]
 
 def calculate_dass21_scores(answers):
+    # questions for each one
     depression_qs = [3, 5, 10, 13, 16, 17, 21]
     anxiety_qs = [2, 4, 7, 9, 15, 19, 20]
     stress_qs = [1, 6, 8, 11, 12, 14, 18]
     
+    # sum score
     depression = sum(answers[f'q{i}'] for i in depression_qs) * 2
     anxiety = sum(answers[f'q{i}'] for i in anxiety_qs) * 2
     stress = sum(answers[f'q{i}'] for i in stress_qs) * 2
     
+    # Determine level
     def get_level(score, thresholds):
         if score < thresholds[0]:
             return 'Normal'
@@ -226,6 +253,7 @@ def calculate_dass21_scores(answers):
         else:
             return 'Extremely Severe'
     
+    # Score level for each one
     depression_thresholds = [10, 14, 21, 28]
     anxiety_thresholds = [8, 10, 15, 20]
     stress_thresholds = [15, 19, 26, 34]
@@ -242,6 +270,7 @@ def calculate_dass21_scores(answers):
 def get_recommendations(result):
     recommendations = []
     
+    # Depression
     if result.depression_level in ['Severe', 'Extremely Severe']:
         recommendations.append({
             'type': 'depression',
@@ -265,6 +294,7 @@ def get_recommendations(result):
             ]
         })
     
+    # Anxiety
     if result.anxiety_level in ['Severe', 'Extremely Severe']:
         recommendations.append({
             'type': 'anxiety',
@@ -277,6 +307,7 @@ def get_recommendations(result):
             ]
         })
     
+    # Stress
     if result.stress_level in ['Severe', 'Extremely Severe']:
         recommendations.append({
             'type': 'stress',
@@ -290,6 +321,7 @@ def get_recommendations(result):
             ]
         })
     
+    # all normal
     if not recommendations:
         recommendations.append({
             'type': 'general',
