@@ -13,34 +13,28 @@ class SignUpView(CreateView):
     template_name = 'registration/signup.html'
 
     def form_valid(self, form):
-        # FIX: Chỉ save 1 lần
         user = form.save()
-        
-        # Lấy user_type từ POST data (vì không có trong form)
         user_type = self.request.POST.get('user_type', 'student')
-        
-        # Tạo UserProfile
         UserProfile.objects.create(user=user, user_type=user_type)
-        
         # Login
         login(self.request, user)
         
         # Redirect dựa vào user_type
         if user_type == 'therapist':
-            return redirect('therapist_basic_info')  # FIX: Sửa typo
+            return redirect('therapist_basic_info')
         else:
             return redirect('collect_basic_info')
 
 @login_required
 def therapist_verification_view(request):
-    profile = request.user.userprofile  # FIX: Sửa typo
+    profile = request.user.userprofile
 
     if profile.user_type != 'therapist':
         messages.error(request, 'This page is only for therapists!')
         return redirect('homepage')
     
     if request.method == 'POST':
-        form = TherapistVerificationForm(request.POST, request.FILES, instance=profile)  # FIX
+        form = TherapistVerificationForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             profile = form.save(commit=False)
             profile.verification_status = 'pending'
@@ -50,9 +44,9 @@ def therapist_verification_view(request):
         else:
             messages.error(request, 'Please upload a valid image file.')
     else:
-        form = TherapistVerificationForm(instance=profile)  # FIX: Sửa typo
+        form = TherapistVerificationForm(instance=profile)
     
-    return render(request, 'registration/therapist_verification.html', {'form': form})  # FIX: Thêm return
+    return render(request, 'registration/therapist_verification.html', {'form': form})
 
 @login_required
 def verification_pending_view(request):
