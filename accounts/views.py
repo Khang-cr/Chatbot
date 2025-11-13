@@ -9,7 +9,7 @@ from django.contrib import messages
 
 class SignUpView(CreateView):
     form_class = SignUpForm
-    success_url = reverse_lazy('collect_basic_info')
+    success_url = reverse_lazy('student_basic_info')
     template_name = 'registration/signup.html'
 
     def form_valid(self, form):
@@ -23,7 +23,7 @@ class SignUpView(CreateView):
         if user_type == 'therapist':
             return redirect('therapist_basic_info')
         else:
-            return redirect('collect_basic_info')
+            return redirect('student_basic_info')
 
 @login_required
 def therapist_verification_view(request):
@@ -95,7 +95,7 @@ def therapist_basic_info_view(request):
 
 
 @login_required
-def collect_basic_info_view(request):
+def student_basic_info_view(request):
     profile = request.user.userprofile
     if profile.user_type != 'student':
         messages.error(request, 'This page is only for students!')
@@ -125,7 +125,7 @@ def collect_basic_info_view(request):
         # register then do test
         return redirect('dass21_test')
     
-    return render(request, 'registration/collect_basic_info.html')
+    return render(request, 'registration/student_basic_info.html')
 
 @login_required
 def dass21_test_view(request):
