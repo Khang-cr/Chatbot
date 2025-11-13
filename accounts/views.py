@@ -59,7 +59,6 @@ def verification_pending_view(request):
 
 @login_required
 def therapist_basic_info_view(request):
-    """Collect basic information for therapist"""
     profile = request.user.userprofile
     
     if profile.user_type != 'therapist':
