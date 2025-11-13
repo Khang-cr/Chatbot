@@ -173,27 +173,36 @@ def dass21_result_view(request):
         return redirect('dass21_test')
 
 @login_required
-def profile_detail_view(request):
+def student_profile_view(request):
     user = request.user
     profile = user.userprofile
     
-    if profile.user_type == 'therapist':
-        # Therapist profile
-        context = {
-            'user': user,
-            'profile': profile,
-        }
-        return render(request, 'registration/therapist_profile.html', context)
-    else:
-        # Student profile
-        test_history = DASS21Result.objects.filter(user=user).order_by('-test_date')
-        context = {
-            'user': user,
-            'profile': profile,
-            'test_history': test_history,
-        }
-        return render(request, 'registration/student_profile.html', context)
+    if profile.user_type != 'student':
+        messages.error(request, 'This page is only for students!')
+        return redirect('therapist_profile')
     
+    test_history = DASS21Result.objects.filter(user=user).order_by('-test_date')
+    context = {
+        'user': user,
+        'profile': profile,
+        'test_history': test_history,
+    }
+    return render(request, 'registration/student_profile.html', context)
+
+@login_required
+def therapist_profile_view(request):
+    user = request.user
+    profile = user.userprofile
+    
+    if profile.user_type != 'therapist':
+        messages.error(request, 'This page is only for therapists!')
+        return redirect('student_profile')
+    
+    context = {
+        'user': user,
+        'profile': profile,
+    }
+    return render(request, 'registration/therapist_profile.html', context)
 # Helper functions
 
 def get_dass21_questions():
