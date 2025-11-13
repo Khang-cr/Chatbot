@@ -14,7 +14,7 @@
     
     {% elif status == 'approved' %}
     <p style="color: green;"><strong>Congratulations!</strong> Your account has been verified.</p>
-    <p><a href="{% url 'profile_detail' %}">Go to Dashboard</a></p>
+    <p><a href="{% url 'therapist_profile' %}">Go to Dashboard</a></p>
     
     {% elif status == 'rejected' %}
     <p style="color: red;"><strong>Verification Rejected</strong></p>
