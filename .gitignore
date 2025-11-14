@@ -32,7 +32,3 @@ db.sqlite3-journal
 # OS
 .DS_Store
 Thumbs.db
-
-# Migrations (optional - nếu muốn giữ thì comment out)
-# */migrations/*.py
-# !*/migrations/__init__.py
