@@ -1,14 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Đặt Lịch Hẹn</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+            outline: none;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-submit:hover {
+            background: linear-gradient(to right, #3a00c0, #7e1dd2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        
+        .form-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Đặt Lịch Hẹn</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Đặt lịch</button>
-    </form>
+    <div class="container">
+        <div class="header">
+            <h1>Book Appointment</h1>
+            <p>Schedule your counseling session</p>
+        </div>
+        
+        <div class="form-container">
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Counsellor Field -->
+                <div class="form-group">
+                    <label for="id_counsellor">Counsellor</label>
+                    {{ form.counsellor }}
+                    {% if form.counsellor.errors %}
+                        <div class="error-message">
+                            {{ form.counsellor.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Date and Time Field -->
+                <div class="form-group">
+                    <label for="id_date_time">Date & Time</label>
+                    {{ form.date_time }}
+                    {% if form.date_time.errors %}
+                        <div class="error-message">
+                            {{ form.date_time.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Notes Field -->
+                <div class="form-group">
+                    <label for="id_notes">Notes (Optional)</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                        <div class="error-message">
+                            {{ form.notes.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="btn-submit">Book Appointment</button>
+                
+                <p class="form-note">We will confirm your appointment within 24 hours.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Additional CSS to style Django form elements -->
+    <style>
+        /* Style Django form fields to match our design */
+        #id_counsellor,
+        #id_date_time,
+        #id_notes {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        #id_counsellor:focus,
+        #id_date_time:focus,
+        #id_notes:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+            outline: none;
+        }
+        
+        #id_notes {
+            min-height: 100px;
+            resize: vertical;
+        }
+    </style>
 </body>
 </html>

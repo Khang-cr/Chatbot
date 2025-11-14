@@ -1,15 +1,217 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch Hẹn Của Tôi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .appointments-list {
+            list-style: none;
+        }
+        
+        .appointment-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #8e2de2;
+            transition: all 0.3s;
+        }
+        
+        .appointment-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .appointment-counsellor {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4a00e0;
+            margin-bottom: 8px;
+        }
+        
+        .appointment-datetime {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .appointment-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-confirmed {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-state p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(to right, #3a00c0, #7e1dd2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 25px 15px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .appointment-item {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Lịch Hẹn Của Tôi</h1>
-    <ul>
-        {% for appointment in appointments %}
-            <li>Với {{ appointment.counsellor.name }} lúc {{ appointment.date_time }} - Trạng thái: {{ appointment.status }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'counsellor_list' %}">Xem cố vấn</a>
+    <div class="container">
+        <div class="header">
+            <h1>Lịch Hẹn Của Tôi</h1>
+            <p>Xem và quản lý các cuộc hẹn của bạn</p>
+        </div>
+        
+        <div class="content">
+            {% if appointments %}
+                <ul class="appointments-list">
+                    {% for appointment in appointments %}
+                        <li class="appointment-item">
+                            <div class="appointment-counsellor">Với {{ appointment.counsellor.name }}</div>
+                            <div class="appointment-datetime">Thời gian: {{ appointment.date_time }}</div>
+                            <div>
+                                Trạng thái: 
+                                <span class="appointment-status status-{{ appointment.status|lower }}">
+                                    {{ appointment.status }}
+                                </span>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <p>Bạn chưa có cuộc hẹn nào.</p>
+                    <a href="{% url 'counsellor_list' %}" class="btn">Đặt lịch hẹn ngay</a>
+                </div>
+            {% endif %}
+            
+            {% if appointments %}
+                <div class="actions">
+                    <a href="{% url 'counsellor_list' %}" class="btn">Xem cố vấn</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>
