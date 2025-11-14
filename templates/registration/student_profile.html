@@ -1,43 +1,407 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Profile</title>
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(30, 35, 50, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            color: #cbd5e0;
+        }
+        
+        .content {
+            padding: 35px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+            animation: slideIn 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #e2e8f0;
+            font-family: 'Poppins', sans-serif;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            background: rgba(45, 55, 72, 0.7);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .info-item:hover {
+            background: rgba(45, 55, 72, 0.9);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+        
+        .test-history {
+            width: 100%;
+        }
+        
+        .test-item {
+            background: rgba(45, 55, 72, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .test-item:hover {
+            background: rgba(45, 55, 72, 0.9);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .test-date {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #e2e8f0;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .test-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .score-item {
+            background: rgba(30, 35, 50, 0.7);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .score-label {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-bottom: 5px;
+        }
+        
+        .score-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 5px;
+        }
+        
+        .score-level {
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .level-normal {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
+        
+        .level-mild {
+            background: rgba(237, 137, 54, 0.2);
+            color: #ed8936;
+        }
+        
+        .level-moderate {
+            background: rgba(246, 173, 85, 0.2);
+            color: #f6ad55;
+        }
+        
+        .level-severe {
+            background: rgba(245, 101, 101, 0.2);
+            color: #f56565;
+        }
+        
+        .level-extreme {
+            background: rgba(229, 62, 62, 0.2);
+            color: #e53e3e;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 180px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #5a6578 0%, #3d4758 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #63b3ed 0%, #4299e1 100%);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0aec0;
+        }
+        
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+                border-radius: 12px;
+            }
+            
+            .header {
+                padding: 25px 15px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .header p {
+                font-size: 14px;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .test-scores {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>Welcome back, {{ user.username }}!</h2>
-    <p>Member since {{ user.date_joined|date:"F Y" }}</p>
-    
-    <hr>
-    
-    <h3>Personal Information</h3>
-    <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>Age:</strong> {{ profile.age }}</p>
-    <p><strong>Gender:</strong> {{ profile.get_gender_display }}</p>
-    <p><strong>Major/Occupation:</strong> {{ profile.occupation }}</p>
-    <p><strong>University:</strong> {{ profile.university }}</p>
-    
-    <hr>
-    
-    <h3>Assessment History</h3>
-    {% if test_history %}
-        {% for test in test_history %}
-        <p>
-            <strong>{{ test.test_date|date:"M d, Y" }}</strong><br>
-            Depression: {{ test.depression_score }} ({{ test.depression_level }})<br>
-            Anxiety: {{ test.anxiety_score }} ({{ test.anxiety_level }})<br>
-            Stress: {{ test.stress_score }} ({{ test.stress_level }})
-        </p>
-        <hr>
-        {% endfor %}
-    {% else %}
-        <p>No assessments completed yet.</p>
-    {% endif %}
-    
-    <br>
-    <a href="{% url 'dass21_test' %}">Take New Assessment</a> | 
-    <a href="{% url 'homepage' %}">Homepage</a> |
-    <a href="{% url 'login' %}">Log Out</a>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome back, {{ user.username }}!</h1>
+            <p>Member since {{ user.date_joined|date:"F Y" }}</p>
+        </div>
+        
+        <div class="content">
+            <!-- Personal Information Section -->
+            <div class="section">
+                <h2 class="section-title">Personal Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Name</div>
+                        <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ user.email }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Age</div>
+                        <div class="info-value">{{ profile.age }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Gender</div>
+                        <div class="info-value">{{ profile.get_gender_display }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Major/Occupation</div>
+                        <div class="info-value">{{ profile.occupation }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">University</div>
+                        <div class="info-value">{{ profile.university }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Assessment History Section -->
+            <div class="section">
+                <h2 class="section-title">Assessment History</h2>
+                <div class="test-history">
+                    {% if test_history %}
+                        {% for test in test_history %}
+                        <div class="test-item">
+                            <div class="test-date">{{ test.test_date|date:"M d, Y" }}</div>
+                            <div class="test-scores">
+                                <div class="score-item">
+                                    <div class="score-label">Depression</div>
+                                    <div class="score-value">{{ test.depression_score }}</div>
+                                    <div class="score-level level-{{ test.depression_level|lower }}">{{ test.depression_level }}</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-label">Anxiety</div>
+                                    <div class="score-value">{{ test.anxiety_score }}</div>
+                                    <div class="score-level level-{{ test.anxiety_level|lower }}">{{ test.anxiety_level }}</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-label">Stress</div>
+                                    <div class="score-value">{{ test.stress_score }}</div>
+                                    <div class="score-level level-{{ test.stress_level|lower }}">{{ test.stress_level }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <p>No assessments completed yet.</p>
+                            <a href="{% url 'dass21_test' %}" class="btn btn-primary">Take Your First Assessment</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'dass21_test' %}" class="btn btn-primary">Take New Assessment</a>
+                <a href="{% url 'homepage' %}" class="btn">Homepage</a>
+                <a href="{% url 'login' %}" class="btn">Log Out</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
