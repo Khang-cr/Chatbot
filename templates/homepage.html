@@ -3,25 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>chatbot - Home</title>
+    <title>MindCare - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar bên trái */
+        .sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-link {
+            display: block;
+            background: rgba(74, 0, 224, 0.8);
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 16px;
+            text-align: left;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .nav-link:hover {
+            background: rgba(58, 0, 192, 0.9);
+            transform: translateX(5px);
+        }
+        
+        .logout-btn {
+            background: rgba(108, 117, 125, 0.8);
+            margin-top: auto;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(90, 98, 104, 0.9);
+        }
+        
+        /* Nội dung chính bên phải */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            transform: translateY(-170px);
+        }
+        
+        .welcome-card {
+            background: linear-gradient(to bottom right, #142e3c, #065081);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .welcome-card h1 {
+            font-size: 32px;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-card h2 {
+            font-size: 24px;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-card p {
+            color:  #ffffff;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        /* Video background */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(60%);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 20px;
+                gap: 10px;
+            }
+            
+            .nav-link {
+                flex: 1;
+                min-width: 150px;
+                text-align: center;
+            }
+            
+            .logout-btn {
+                margin-top: 0;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .welcome-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to chatbot!</h1>
+    <video autoplay muted loop id="bg-video">
+        <source src="https://v1.pinimg.com/videos/iht/expMp4/08/a5/83/08a583d081309256187e3723586b8c2b_720w.mp4" type="video/mp4">
+    </video>
     
-    {% if user.is_authenticated %}
-        <p>Hello, {{ user.username }}!</p>
-        </nav>
-            <li><a href="{% url 'student_profile' %}">Your Profile</a></li>
-            <li><a href="{% url 'my_appointments' %}">My Appointments</a></li>
-            <li><a href="{% url 'book_appointments' %}">Book Appointment</a></li>
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    {% else %}
-        <p>Please login or sign up</p>
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'signup' %}">Sign Up</a>
-    {% endif %}
+    <!-- Sidebar với các nút chức năng bên trái -->
+    <div class="sidebar">
+        <a href="{% url 'student_profile' %}" class="nav-link">Profile</a>
+        <a href="{% url 'my_appointments' %}" class="nav-link">My Appointments</a>
+        <a href="{% url 'book_appointments' %}" class="nav-link">Book Appointment</a>
+        
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" style="width: 100%;">
+                {% csrf_token %}
+                <button type="submit" class="nav-link logout-btn">Logout</button>
+            </form>
+        {% endif %}
+    </div>
+    
+    <!-- Nội dung chính bên phải -->
+    <div class="main-content">
+        <div class="welcome-card">
+            {% if user.is_authenticated %}
+                <h1>Welcome to Chatbot!</h1>
+                <h2>Hello, {{ user.username }}!</h2>
+                <p>We're glad to have you back. How can we help you today?</p>
+            {% else %}
+                <h1>Welcome to MindCare</h1>
+                <p>Connect with professional counselors and access AI-powered support for your mental wellness journey.</p>
+                <div style="margin-top: 30px;">
+                    <p>Please login or sign up</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
+                        <a href="{% url 'login' %}" class="nav-link" style="display: inline-block; width: auto; min-width: 120px;">Login</a>
+                        <a href="{% url 'signup' %}" class="nav-link logout-btn" style="display: inline-block; width: auto; min-width: 120px;">Sign Up</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>
