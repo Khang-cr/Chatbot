@@ -1,57 +1,65 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lịch Hẹn Của Tôi</title>
+    <title>My Appointments</title>
+    <!-- THÊM GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            color: #333;
         }
         
         .container {
             width: 100%;
             max-width: 800px;
-            background-color: white;
+            background: rgba(30, 35, 50, 0.95);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 0.6s ease-out;
         }
         
         .header {
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
             color: white;
             padding: 30px 20px;
             text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .header h1 {
-            font-size: 32px;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         .header p {
             opacity: 0.9;
-            font-size: 16px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            color: #cbd5e0;
         }
         
         .content {
-            padding: 30px;
+            padding: 35px;
         }
         
         .appointments-list {
@@ -59,103 +67,158 @@
         }
         
         .appointment-item {
-            background: #f8f9fa;
-            border-radius: 10px;
+            background: rgba(45, 55, 72, 0.6);
+            border-radius: 12px;
             padding: 20px;
             margin-bottom: 15px;
-            border-left: 4px solid #8e2de2;
+            border-left: 4px solid #718096;
             transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation: slideIn 0.4s ease-out;
+            animation-fill-mode: both;
         }
+        
+        .appointment-item:nth-child(1) { animation-delay: 0.1s; }
+        .appointment-item:nth-child(2) { animation-delay: 0.2s; }
+        .appointment-item:nth-child(3) { animation-delay: 0.3s; }
+        .appointment-item:nth-child(4) { animation-delay: 0.4s; }
         
         .appointment-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: rgba(45, 55, 72, 0.8);
+            border-left-color: #a0aec0;
         }
         
         .appointment-counsellor {
             font-size: 18px;
             font-weight: 600;
-            color: #4a00e0;
+            color: #e2e8f0;
             margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
         }
         
         .appointment-datetime {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 8px;
+            font-size: 15px;
+            color: #a0aec0;
+            margin-bottom: 10px;
+            font-family: 'Inter', sans-serif;
         }
         
         .appointment-status {
             display: inline-block;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
+            font-family: 'Inter', sans-serif;
         }
         
         .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
+            background-color: rgba(246, 224, 94, 0.2);
+            color: #f6e05e;
+            border: 1px solid rgba(246, 224, 94, 0.3);
         }
         
         .status-confirmed {
-            background-color: #d1ecf1;
-            color: #0c5460;
+            background-color: rgba(99, 179, 237, 0.2);
+            color: #63b3ed;
+            border: 1px solid rgba(99, 179, 237, 0.3);
         }
         
         .status-completed {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: rgba(104, 211, 145, 0.2);
+            color: #68d391;
+            border: 1px solid rgba(104, 211, 145, 0.3);
         }
         
         .status-cancelled {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: rgba(252, 129, 129, 0.2);
+            color: #fc8181;
+            border: 1px solid rgba(252, 129, 129, 0.3);
         }
         
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
-            color: #666;
+            padding: 60px 20px;
+            color: #a0aec0;
+            animation: fadeIn 0.6s ease-out;
         }
         
         .empty-state p {
             font-size: 18px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            font-family: 'Inter', sans-serif;
+            color: #cbd5e0;
         }
         
         .btn {
             display: inline-block;
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
             color: white;
             text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
             font-weight: 600;
             transition: all 0.3s;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .btn:hover {
-            background: linear-gradient(to right, #3a00c0, #7e1dd2);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #5a6578 0%, #3d4758 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
         
         .btn:active {
-            transform: translateY(0);
+            transform: translateY(-1px);
         }
         
         .actions {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
         
         @media (max-width: 768px) {
             .container {
-                border-radius: 10px;
+                border-radius: 12px;
             }
             
             .header {
@@ -163,15 +226,24 @@
             }
             
             .header h1 {
-                font-size: 28px;
+                font-size: 24px;
+            }
+            
+            .header p {
+                font-size: 14px;
             }
             
             .content {
-                padding: 20px;
+                padding: 25px;
             }
             
             .appointment-item {
-                padding: 15px;
+                padding: 18px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 14px;
             }
         }
     </style>
@@ -179,8 +251,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Lịch Hẹn Của Tôi</h1>
-            <p>Xem và quản lý các cuộc hẹn của bạn</p>
+            <h1>My Appointments</h1>
+            <p>View and manage your appointments</p>
         </div>
         
         <div class="content">
@@ -188,10 +260,10 @@
                 <ul class="appointments-list">
                     {% for appointment in appointments %}
                         <li class="appointment-item">
-                            <div class="appointment-counsellor">Với {{ appointment.counsellor.name }}</div>
-                            <div class="appointment-datetime">Thời gian: {{ appointment.date_time }}</div>
+                            <div class="appointment-counsellor">With {{ appointment.counsellor.name }}</div>
+                            <div class="appointment-datetime">Time: {{ appointment.date_time }}</div>
                             <div>
-                                Trạng thái: 
+                                Status: 
                                 <span class="appointment-status status-{{ appointment.status|lower }}">
                                     {{ appointment.status }}
                                 </span>
@@ -199,16 +271,14 @@
                         </li>
                     {% endfor %}
                 </ul>
+                
+                <div class="actions">
+                    <a href="{% url 'counsellor_list' %}" class="btn">View Counsellors</a>
+                </div>
             {% else %}
                 <div class="empty-state">
-                    <p>Bạn chưa có cuộc hẹn nào.</p>
-                    <a href="{% url 'counsellor_list' %}" class="btn">Đặt lịch hẹn ngay</a>
-                </div>
-            {% endif %}
-            
-            {% if appointments %}
-                <div class="actions">
-                    <a href="{% url 'counsellor_list' %}" class="btn">Xem cố vấn</a>
+                    <p>You don't have any appointments yet.</p>
+                    <a href="{% url 'counsellor_list' %}" class="btn">Book Appointment Now</a>
                 </div>
             {% endif %}
         </div>

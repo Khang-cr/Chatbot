@@ -3,55 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách Cố vấn</title>
+    <title>Counsellor List</title>
+    <!-- THÊM GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            color: #333;
         }
         
         .container {
             width: 100%;
             max-width: 1000px;
-            background-color: white;
+            background: rgba(30, 35, 50, 0.95);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 0.6s ease-out;
         }
         
         .header {
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
             color: white;
             padding: 30px 20px;
             text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .header h1 {
-            font-size: 32px;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         .header p {
             opacity: 0.9;
-            font-size: 16px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            color: #cbd5e0;
         }
         
         .content {
-            padding: 30px;
+            padding: 35px;
+        }
+        
+        .filter-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(45, 55, 72, 0.5);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation: slideIn 0.4s ease-out;
+            animation-delay: 0.1s;
+            animation-fill-mode: both;
+        }
+        
+        .filter-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 18px;
+            background: rgba(45, 55, 72, 0.8);
+            border: 2px solid #4a5568;
+            border-radius: 20px;
+            color: #cbd5e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(74, 85, 104, 0.8);
+            border-color: #718096;
+            transform: translateY(-2px);
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            border-color: #718096;
+            color: white;
         }
         
         .counsellors-grid {
@@ -62,158 +120,179 @@
         }
         
         .counsellor-card {
-            background: #f8f9fa;
-            border-radius: 10px;
+            background: rgba(45, 55, 72, 0.6);
+            border-radius: 12px;
             padding: 25px;
-            border-left: 4px solid #8e2de2;
+            border-left: 4px solid #718096;
             transition: all 0.3s;
             display: flex;
             flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation: slideIn 0.4s ease-out;
+            animation-fill-mode: both;
         }
+        
+        .counsellor-card:nth-child(1) { animation-delay: 0.2s; }
+        .counsellor-card:nth-child(2) { animation-delay: 0.3s; }
+        .counsellor-card:nth-child(3) { animation-delay: 0.4s; }
+        .counsellor-card:nth-child(4) { animation-delay: 0.5s; }
         
         .counsellor-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+            background: rgba(45, 55, 72, 0.8);
+            border-left-color: #a0aec0;
         }
         
         .counsellor-name {
             font-size: 20px;
             font-weight: 600;
-            color: #4a00e0;
+            color: #e2e8f0;
             margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
         }
         
         .counsellor-specialty {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 10px;
-            padding: 5px 0;
-            border-bottom: 1px solid #e9ecef;
+            font-size: 15px;
+            color: #a0aec0;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Inter', sans-serif;
         }
         
         .counsellor-availability {
             font-size: 14px;
-            color: #666;
+            color: #cbd5e0;
             margin-top: auto;
-            padding-top: 10px;
+            padding-top: 12px;
+            font-family: 'Inter', sans-serif;
         }
         
         .availability-badge {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 15px;
             font-size: 12px;
             font-weight: 500;
             margin-top: 8px;
+            font-family: 'Inter', sans-serif;
         }
         
         .available {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: rgba(104, 211, 145, 0.2);
+            color: #68d391;
+            border: 1px solid rgba(104, 211, 145, 0.3);
         }
         
         .busy {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: rgba(252, 129, 129, 0.2);
+            color: #fc8181;
+            border: 1px solid rgba(252, 129, 129, 0.3);
         }
         
         .limited {
-            background-color: #fff3cd;
-            color: #856404;
+            background-color: rgba(246, 224, 94, 0.2);
+            color: #f6e05e;
+            border: 1px solid rgba(246, 224, 94, 0.3);
         }
         
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
-            color: #666;
+            padding: 60px 20px;
+            color: #a0aec0;
+            animation: fadeIn 0.6s ease-out;
         }
         
         .empty-state p {
             font-size: 18px;
             margin-bottom: 20px;
+            font-family: 'Inter', sans-serif;
+            color: #cbd5e0;
         }
         
         .btn {
             display: inline-block;
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
             color: white;
             text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
             font-weight: 600;
             transition: all 0.3s;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             text-align: center;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .btn:hover {
-            background: linear-gradient(to right, #3a00c0, #7e1dd2);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #5a6578 0%, #3d4758 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
         
         .btn:active {
-            transform: translateY(0);
+            transform: translateY(-1px);
         }
         
         .btn-secondary {
-            background: #6c757d;
+            background: rgba(74, 85, 104, 0.8);
+            border: 2px solid #4a5568;
         }
         
         .btn-secondary:hover {
-            background: #5a6268;
+            background: rgba(90, 101, 120, 0.9);
+            border-color: #718096;
         }
         
         .actions {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
             display: flex;
             gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
         }
         
-        .filter-section {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
-        .filter-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #4a00e0;
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
-        
-        .filter-options {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            padding: 8px 16px;
-            background: white;
-            border: 2px solid #8e2de2;
-            border-radius: 20px;
-            color: #8e2de2;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-        
-        .filter-btn:hover, .filter-btn.active {
-            background: #8e2de2;
-            color: white;
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
         
         @media (max-width: 768px) {
             .container {
-                border-radius: 10px;
+                border-radius: 12px;
             }
             
             .header {
@@ -221,11 +300,15 @@
             }
             
             .header h1 {
-                font-size: 28px;
+                font-size: 24px;
+            }
+            
+            .header p {
+                font-size: 14px;
             }
             
             .content {
-                padding: 20px;
+                padding: 25px;
             }
             
             .counsellors-grid {
@@ -238,7 +321,20 @@
             
             .actions {
                 flex-direction: column;
-                align-items: center;
+                align-items: stretch;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+
+            .filter-options {
+                gap: 10px;
+            }
+
+            .filter-btn {
+                padding: 8px 14px;
+                font-size: 13px;
             }
         }
     </style>
@@ -246,20 +342,20 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Danh sách Cố vấn</h1>
-            <p>Chọn cố vấn phù hợp với nhu cầu của bạn</p>
+            <h1>Counsellor List</h1>
+            <p>Choose the counsellor that fits your needs</p>
         </div>
         
         <div class="content">
             {% if counsellors %}
                 <div class="filter-section">
-                    <div class="filter-title">Lọc theo chuyên môn:</div>
+                    <div class="filter-title">Filter by specialty:</div>
                     <div class="filter-options">
-                        <button class="filter-btn active" data-filter="all">Tất cả</button>
-                        <button class="filter-btn" data-filter="Tâm lý">Tâm lý</button>
-                        <button class="filter-btn" data-filter="Học đường">Học đường</button>
-                        <button class="filter-btn" data-filter="Gia đình">Gia đình</button>
-                        <button class="filter-btn" data-filter="Nghề nghiệp">Nghề nghiệp</button>
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="Psychology">Psychology</button>
+                        <button class="filter-btn" data-filter="School Counseling">School Counseling</button>
+                        <button class="filter-btn" data-filter="Family">Family</button>
+                        <button class="filter-btn" data-filter="Career">Career</button>
                     </div>
                 </div>
                 
@@ -283,13 +379,13 @@
                 </div>
             {% else %}
                 <div class="empty-state">
-                    <p>Hiện không có cố vấn nào.</p>
+                    <p>There are no counsellors at the moment...</p>
                 </div>
             {% endif %}
             
             <div class="actions">
-                <a href="{% url 'book_appointments' %}" class="btn">Đặt lịch hẹn</a>
-                <a href="{% url 'my_appointments' %}" class="btn btn-secondary">Xem lịch hẹn của tôi</a>
+                <a href="{% url 'book_appointments' %}" class="btn">Book Appointment</a>
+                <a href="{% url 'my_appointments' %}" class="btn btn-secondary">My Appointments</a>
             </div>
         </div>
     </div>

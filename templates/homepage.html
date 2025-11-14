@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MindCare - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
@@ -19,7 +20,7 @@
         
         /* Sidebar bên trái */
         .sidebar {
-            width: 250px;
+            width: 200px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             padding: 30px 20px;
@@ -31,22 +32,26 @@
         
         .nav-link {
             display: block;
-            background: rgba(74, 0, 224, 0.8);
             color: white;
             text-decoration: none;
-            padding: 15px 20px;
+            padding: 15px 15px;
             border-radius: 10px;
             font-weight: 600;
             transition: all 0.3s;
-            font-size: 16px;
+            font-size: 15px;
             text-align: left;
             border: none;
             cursor: pointer;
             width: 100%;
+            background: linear-gradient(135deg, rgb(41, 72, 141), rgb(2, 75, 139));
+            color: white;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 0px rgba(0,0,0,0.1);
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            letter-spacing: 0.5px;
         }
         
         .nav-link:hover {
-            background: rgba(58, 0, 192, 0.9);
+            background: rgb(2, 53, 99);
             transform: translateX(5px);
         }
         
@@ -68,35 +73,35 @@
             align-items: center;
             padding: 40px;
             transform: translateY(-170px);
-        }
-        
-        .welcome-card {
-            background: linear-gradient(to bottom right, #142e3c, #065081);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            color: white;
             text-align: center;
-            max-width: 500px;
-            width: 100%;
         }
-        
-        .welcome-card h1 {
-            font-size: 32px;
-            color: #ffffff;
-            margin-bottom: 15px;
-        }
-        
-        .welcome-card h2 {
-            font-size: 24px;
-            color: #ffffff;
-            margin-bottom: 15px;
-        }
-        
-        .welcome-card p {
-            color:  #ffffff;
-            font-size: 16px;
-            line-height: 1.6;
+
+        .main-content h1 {
+            font-size: 48px;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .main-content h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .main-content p {
+            font-size: 20px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            max-width: 600px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
         }
         
         /* Video background */
@@ -138,10 +143,19 @@
             
             .main-content {
                 padding: 20px;
+                transform: translateY(0);
             }
             
-            .welcome-card {
-                padding: 30px 20px;
+            .main-content h1 {
+                font-size: 36px;
+            }
+            
+            .main-content h2 {
+                font-size: 24px;
+            }
+            
+            .main-content p {
+                font-size: 16px;
             }
         }
     </style>
@@ -154,8 +168,8 @@
     <!-- Sidebar với các nút chức năng bên trái -->
     <div class="sidebar">
         <a href="{% url 'student_profile' %}" class="nav-link">Profile</a>
-        <a href="{% url 'my_appointments' %}" class="nav-link">My Appointments</a>
-        <a href="{% url 'book_appointments' %}" class="nav-link">Book Appointment</a>
+        <a href="{% url 'my_appointments' %}" class="nav-link">Appointments</a>
+        <a href="{% url 'book_appointments' %}" class="nav-link">Booking</a>
         
         {% if user.is_authenticated %}
             <form method="post" action="{% url 'logout' %}" style="width: 100%;">
@@ -167,11 +181,10 @@
     
     <!-- Nội dung chính bên phải -->
     <div class="main-content">
-        <div class="welcome-card">
             {% if user.is_authenticated %}
-                <h1>Welcome to Chatbot!</h1>
+                <h1>Welcome to Chatbot!</h1>    
                 <h2>Hello, {{ user.username }}!</h2>
-                <p>We're glad to have you back. How can we help you today?</p>
+                <p><b>We're glad to have you back. How can we help you today?</b></p>
             {% else %}
                 <h1>Welcome to MindCare</h1>
                 <p>Connect with professional counselors and access AI-powered support for your mental wellness journey.</p>
@@ -183,7 +196,10 @@
                     </div>
                 </div>
             {% endif %}
-        </div>
     </div>
+<script>
+    const video = document.getElementById('bg-video');
+    video.playbackRate = 0.25;
+</script>
 </body>
 </html>
