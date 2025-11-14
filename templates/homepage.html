@@ -10,12 +10,10 @@
     
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}!</p>
-        <nav>
-            <ul>
-                <li><a href="{% url 'student_profile' %}">Your Profile</a></li>
-            </ul>
         </nav>
-        
+            <li><a href="{% url 'student_profile' %}">Your Profile</a></li>
+            <li><a href="{% url 'my_appointments' %}">My Appointments</a></li>
+            <li><a href="{% url 'book_appointments' %}">Book Appointment</a></li>
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit">Logout</button>

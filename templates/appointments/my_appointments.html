@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Lịch Hẹn Của Tôi</title>
+</head>
+<body>
+    <h1>Lịch Hẹn Của Tôi</h1>
+    <ul>
+        {% for appointment in appointments %}
+            <li>Với {{ appointment.counsellor.name }} lúc {{ appointment.date_time }} - Trạng thái: {{ appointment.status }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'counsellor_list' %}">Xem cố vấn</a>
+</body>
+</html>

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',      # DISPLAYING ONE TIME NOTIFICATIONS TO USERS
     'django.contrib.staticfiles',   # SERVING STATIC FILE (IMAGE, CSS)
     'accounts',
+    'appointments',
 ]
 
 MIDDLEWARE = [
