@@ -49,7 +49,7 @@ class UserProfile(models.Model):
 
     student_id = models.CharField(max_length=50, null=True, blank=True)
     has_previous_counseling = models.BooleanField(default=False)
-    is_currently_in_theraphy = models.BooleanField(default=False)
+    is_currently_in_therapy = models.BooleanField(default=False)
     notes = models.TextField(null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
